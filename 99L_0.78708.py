@@ -1,32 +1,26 @@
-import numpy as np
 import pandas as pd
+import numpy as np
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# データセットの読み込み
+##### データ読み込み
 train_data = pd.read_csv('/kaggle/input/competitions/titanic/train.csv')
-test_data = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
+test_data  = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
 
-# train_dataとtest_dataの連結
+##### 前準備
 test_data['Survived'] = np.nan
-df = pd.concat([train_data, test_data], ignore_index=True, sort=False)
-
-# dfの情報
-df.info()
-
-# Sexと生存率の関係 
-sns.barplot(x='Sex', y='Survived', data=df, palette='Set3')
-plt.show()
+all_data = pd.concat([train_data, test_data], ignore_index=True, sort=False)
 
 # ------------ Age ------------
 # Age を Pclass, Sex, Parch, SibSp からランダムフォレストで推定
 from sklearn.ensemble import RandomForestRegressor
 
 # 推定に使用する項目を指定
-age_df = df[['Age', 'Pclass','Sex','Parch','SibSp']]
+age_df = all_data[['Age', 'Pclass','Sex','Parch','SibSp']]
 
 # ラベル特徴量をワンホットエンコーディング
-age_df=pd.get_dummies(age_df)
+age_df=pd.get_dummies(age_all_data)
 
 # 学習データとテストデータに分離し、numpyに変換
 known_age = age_df[age_df.Age.notnull()].values  
@@ -42,72 +36,72 @@ rfr.fit(X, y)
 
 # 推定モデルを使って、テストデータのAgeを予測し、補完
 predictedAges = rfr.predict(unknown_age[:, 1::])
-df.loc[(df.Age.isnull()), 'Age'] = predictedAges 
+all_data.loc[(all_data.Age.isnull()), 'Age'] = predictedAges 
 
 # 年齢別生存曲線と死亡曲線
-facet = sns.FacetGrid(df[0:890], hue="Survived",aspect=2)
+facet = sns.FacetGrid(all_data[0:890], hue="Survived",aspect=2)
 facet.map(sns.kdeplot,'Age',shade= True)
-facet.set(xlim=(0, df.loc[0:890,'Age'].max()))
+facet.set(xlim=(0, all_data.loc[0:890,'Age'].max()))
 facet.add_legend()
 plt.show()
 
 # ------------ Name --------------
 # Nameから敬称(Title)を抽出し、グルーピング
-df['Title'] = df['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
-df['Title'].replace(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer', inplace=True)
-df['Title'].replace(['Don', 'Sir',  'the Countess', 'Lady', 'Dona'], 'Royalty', inplace=True)
-df['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
-df['Title'].replace(['Mlle'], 'Miss', inplace=True)
-df['Title'].replace(['Jonkheer'], 'Master', inplace=True)
-sns.barplot(x='Title', y='Survived', data=df, palette='Set3')
+all_data['Title'] = all_data['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
+all_data['Title'].replace(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer', inplace=True)
+all_data['Title'].replace(['Don', 'Sir',  'the Countess', 'Lady', 'Dona'], 'Royalty', inplace=True)
+all_data['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
+all_data['Title'].replace(['Mlle'], 'Miss', inplace=True)
+all_data['Title'].replace(['Jonkheer'], 'Master', inplace=True)
+sns.barplot(x='Title', y='Survived', data=all_data, palette='Set3')
 
 # ------------ Surname ------------
 # NameからSurname(苗字)を抽出
-df['Surname'] = df['Name'].map(lambda name:name.split(',')[0].strip())
+all_data['Surname'] = all_data['Name'].map(lambda name:name.split(',')[0].strip())
 
 # 同じSurname(苗字)の出現頻度をカウント(出現回数が2以上なら家族)
-df['FamilyGroup'] = df['Surname'].map(df['Surname'].value_counts()) 
+all_data['FamilyGroup'] = all_data['Surname'].map(all_data['Surname'].value_counts()) 
 
 # ----------- Fare -------------
 # 欠損値を Embarked='S', Pclass=3 の平均値で補完
-fare=df.loc[(df['Embarked'] == 'S') & (df['Pclass'] == 3), 'Fare'].median()
-df['Fare']=df['Fare'].fillna(fare)
+fare=all_data.loc[(all_data['Embarked'] == 'S') & (all_data['Pclass'] == 3), 'Fare'].median()
+all_data['Fare']=all_data['Fare'].fillna(fare)
 
 # ----------- Family -------------
 # Family = SibSp + Parch + 1 を特徴量とし、グルーピング
-df['Family']=df['SibSp']+df['Parch']+1
-df.loc[(df['Family']>=2) & (df['Family']<=4), 'Family_label'] = 2
-df.loc[(df['Family']>=5) & (df['Family']<=7) | (df['Family']==1), 'Family_label'] = 1  # == に注意
-df.loc[(df['Family']>=8), 'Family_label'] = 0
+all_data['Family']=all_data['SibSp']+all_data['Parch']+1
+all_data.loc[(all_data['Family']>=2) & (all_data['Family']<=4), 'Family_label'] = 2
+all_data.loc[(all_data['Family']>=5) & (all_data['Family']<=7) | (all_data['Family']==1), 'Family_label'] = 1  # == に注意
+all_data.loc[(all_data['Family']>=8), 'Family_label'] = 0
 
 # ----------- Ticket ----------------
 # 同一Ticketナンバーの人が何人いるかを特徴量として抽出
-Ticket_Count = dict(df['Ticket'].value_counts())
-df['TicketGroup'] = df['Ticket'].map(Ticket_Count)
-sns.barplot(x='TicketGroup', y='Survived', data=df, palette='Set3')
+Ticket_Count = dict(all_data['Ticket'].value_counts())
+all_data['TicketGroup'] = all_data['Ticket'].map(Ticket_Count)
+sns.barplot(x='TicketGroup', y='Survived', data=all_data, palette='Set3')
 plt.show()
 
 # 生存率で3つにグルーピング
-df.loc[(df['TicketGroup']>=2) & (df['TicketGroup']<=4), 'Ticket_label'] = 2
-df.loc[(df['TicketGroup']>=5) & (df['TicketGroup']<=8) | (df['TicketGroup']==1), 'Ticket_label'] = 1  
-df.loc[(df['TicketGroup']>=11), 'Ticket_label'] = 0
-sns.barplot(x='Ticket_label', y='Survived', data=df, palette='Set3')
+all_data.loc[(all_data['TicketGroup']>=2) & (all_data['TicketGroup']<=4), 'Ticket_label'] = 2
+all_data.loc[(all_data['TicketGroup']>=5) & (all_data['TicketGroup']<=8) | (all_data['TicketGroup']==1), 'Ticket_label'] = 1  
+all_data.loc[(all_data['TicketGroup']>=11), 'Ticket_label'] = 0
+sns.barplot(x='Ticket_label', y='Survived', data=all_data, palette='Set3')
 plt.show()
 
 # ------------- Cabin ----------------
 # Cabinの先頭文字を特徴量とする(欠損値は U )
-df['Cabin'] = df['Cabin'].fillna('Unknown')
-df['Cabin_label']=df['Cabin'].str.get(0)
-sns.barplot(x='Cabin_label', y='Survived', data=df, palette='Set3')
+all_data['Cabin'] = all_data['Cabin'].fillna('Unknown')
+all_data['Cabin_label']=all_data['Cabin'].str.get(0)
+sns.barplot(x='Cabin_label', y='Survived', data=all_data, palette='Set3')
 plt.show()
 
 # ---------- Embarked ---------------
 # 欠損値をSで補完
-df['Embarked'] = df['Embarked'].fillna('S') 
+all_data['Embarked'] = all_data['Embarked'].fillna('S') 
 
 # ------------- 前処理 ---------------
 # 推定に使用する項目を指定
-df = df[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label','Cabin_label','Ticket_label']]
+df = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label','Cabin_label','Ticket_label']]
 
 # ラベル特徴量をワンホットエンコーディング
 df = pd.get_dummies(df)
@@ -162,4 +156,5 @@ print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 PassengerId=test_data['PassengerId']
 predictions = pipeline.predict(test_x)
 submission = pd.DataFrame({"PassengerId": PassengerId, "Survived": predictions.astype(np.int32)})
-submission.to_csv("my_submission-beta.csv", index=False)
+submission.to_csv("submission-99L-001.csv", index=False)
+print("submission-99L-001.csv を作成しました")
