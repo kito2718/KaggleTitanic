@@ -7,14 +7,14 @@ import numpy as np
 train_data = pd.read_csv('/kaggle/input/competitions/titanic/train.csv')
 test_data  = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
 
+##### 前準備
+all_data = pd.concat([train_data, test_data], ignore_index=True)
+
 # 家族人数のグループ分け
 def family_size_group(size):
     if size == 1:   return 'Alone'
     elif size <= 4: return 'Small'
     else:           return 'Large'
-
-##### 前準備
-all_data = pd.concat([train_data, test_data], ignore_index=True)
 
 ##### 特徴量エンジニアリング(家族人数)
 all_data['FamilySize'] = all_data['SibSp'] + all_data['Parch'] + 1
@@ -95,7 +95,7 @@ output = pd.DataFrame({
 })
 
 ##### 提出ファイル出力
-output.to_csv("re_submission-4-5-2.csv", index=False)
+output.to_csv("submission-99R-001.csv", index=False)
 
 ##### 完了
-print("re_submission.csv を作成しました 004-5-2")
+print("submission-99R-001.csv を作成しました")
