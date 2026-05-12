@@ -12,7 +12,29 @@ test_data  = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
 test_data['Survived'] = np.nan
 all_data = pd.concat([train_data, test_data], ignore_index=True, sort=False)
 
-# ------------ Age ------------
+##### 特徴量エンジニアリング(家族人数)
+# Family = SibSp + Parch + 1 を特徴量とし、グルーピング
+all_data['Family']=all_data['SibSp']+all_data['Parch']+1
+all_data.loc[(all_data['Family']>=2) & (all_data['Family']<=4), 'Family_label'] = 2
+all_data.loc[(all_data['Family']>=5) & (all_data['Family']<=7) | (all_data['Family']==1), 'Family_label'] = 1  # == に注意
+all_data.loc[(all_data['Family']>=8), 'Family_label'] = 0
+
+
+##### 特徴量エンジニアリング(敬称抽出)
+all_data['Title'] = all_data['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
+all_data['Title'].replace(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer', inplace=True)
+all_data['Title'].replace(['Don', 'Sir',  'the Countess', 'Lady', 'Dona'], 'Royalty', inplace=True)
+all_data['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
+all_data['Title'].replace(['Mlle'], 'Miss', inplace=True)
+all_data['Title'].replace(['Jonkheer'], 'Master', inplace=True)
+
+
+##### 特徴量エンジニアリング(Fareの欠損値補完(これはTestデータに1件だけなので中央値で。特にこだわりなし))
+# 欠損値を Embarked='S', Pclass=3 の平均値で補完
+fare=all_data.loc[(all_data['Embarked'] == 'S') & (all_data['Pclass'] == 3), 'Fare'].median()
+all_data['Fare']=all_data['Fare'].fillna(fare)
+
+##################### AgeをRandomForestRegressorで推定 ここから
 # Age を Pclass, Sex, Parch, SibSp からランダムフォレストで推定
 from sklearn.ensemble import RandomForestRegressor
 
@@ -37,67 +59,7 @@ rfr.fit(X, y)
 # 推定モデルを使って、テストデータのAgeを予測し、補完
 predictedAges = rfr.predict(unknown_age[:, 1::])
 all_data.loc[(all_data.Age.isnull()), 'Age'] = predictedAges 
-
-# 年齢別生存曲線と死亡曲線
-facet = sns.FacetGrid(all_data[0:890], hue="Survived",aspect=2)
-facet.map(sns.kdeplot,'Age',shade= True)
-facet.set(xlim=(0, all_data.loc[0:890,'Age'].max()))
-facet.add_legend()
-plt.show()
-
-# ------------ Name --------------
-# Nameから敬称(Title)を抽出し、グルーピング
-all_data['Title'] = all_data['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
-all_data['Title'].replace(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer', inplace=True)
-all_data['Title'].replace(['Don', 'Sir',  'the Countess', 'Lady', 'Dona'], 'Royalty', inplace=True)
-all_data['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
-all_data['Title'].replace(['Mlle'], 'Miss', inplace=True)
-all_data['Title'].replace(['Jonkheer'], 'Master', inplace=True)
-sns.barplot(x='Title', y='Survived', data=all_data, palette='Set3')
-
-# ------------ Surname ------------
-# NameからSurname(苗字)を抽出
-all_data['Surname'] = all_data['Name'].map(lambda name:name.split(',')[0].strip())
-
-# 同じSurname(苗字)の出現頻度をカウント(出現回数が2以上なら家族)
-all_data['FamilyGroup'] = all_data['Surname'].map(all_data['Surname'].value_counts()) 
-
-# ----------- Fare -------------
-# 欠損値を Embarked='S', Pclass=3 の平均値で補完
-fare=all_data.loc[(all_data['Embarked'] == 'S') & (all_data['Pclass'] == 3), 'Fare'].median()
-all_data['Fare']=all_data['Fare'].fillna(fare)
-
-# ----------- Family -------------
-# Family = SibSp + Parch + 1 を特徴量とし、グルーピング
-all_data['Family']=all_data['SibSp']+all_data['Parch']+1
-all_data.loc[(all_data['Family']>=2) & (all_data['Family']<=4), 'Family_label'] = 2
-all_data.loc[(all_data['Family']>=5) & (all_data['Family']<=7) | (all_data['Family']==1), 'Family_label'] = 1  # == に注意
-all_data.loc[(all_data['Family']>=8), 'Family_label'] = 0
-
-# ----------- Ticket ----------------
-# 同一Ticketナンバーの人が何人いるかを特徴量として抽出
-Ticket_Count = dict(all_data['Ticket'].value_counts())
-all_data['TicketGroup'] = all_data['Ticket'].map(Ticket_Count)
-sns.barplot(x='TicketGroup', y='Survived', data=all_data, palette='Set3')
-plt.show()
-
-# 生存率で3つにグルーピング
-all_data.loc[(all_data['TicketGroup']>=2) & (all_data['TicketGroup']<=4), 'Ticket_label'] = 2
-all_data.loc[(all_data['TicketGroup']>=5) & (all_data['TicketGroup']<=8) | (all_data['TicketGroup']==1), 'Ticket_label'] = 1  
-all_data.loc[(all_data['TicketGroup']>=11), 'Ticket_label'] = 0
-sns.barplot(x='Ticket_label', y='Survived', data=all_data, palette='Set3')
-plt.show()
-
-# ------------- Cabin ----------------
-# Cabinの先頭文字を特徴量とする(欠損値は U )
-all_data['Cabin'] = all_data['Cabin'].fillna('Unknown')
-all_data['Cabin_label']=all_data['Cabin'].str.get(0)
-sns.barplot(x='Cabin_label', y='Survived', data=all_data, palette='Set3')
-plt.show()
-
-# ---------- Embarked ---------------
-# 欠損値をSで補完
-all_data['Embarked'] = all_data['Embarked'].fillna('S') 
+#####################AgeをRandomForestRegressorで推定 ここまで
 
 # ------------- 前処理 ---------------
 # 推定に使用する項目を指定
@@ -156,5 +118,5 @@ print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 PassengerId=test_data['PassengerId']
 predictions = pipeline.predict(test_x)
 submission = pd.DataFrame({"PassengerId": PassengerId, "Survived": predictions.astype(np.int32)})
-submission.to_csv("submission-99L-001.csv", index=False)
-print("submission-99L-001.csv を作成しました")
+submission.to_csv("submission-99L-002.csv", index=False)
+print("submission-99L-002.csv を作成しました")
