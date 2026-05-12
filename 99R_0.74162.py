@@ -32,7 +32,7 @@ all_data['Sex'] = all_data['Sex'].map({'male': 0, 'female': 1})
 ##### 特徴量エンジニアリング(Fareの欠損値補完(これはTestデータに1件だけなので中央値で。特にこだわりなし))
 all_data['Fare'] = all_data['Fare'].fillna(all_data['Fare'].median())
 
-#####################AgeをRandomForestRegressorで推定 ここから
+##################### AgeをRandomForestRegressorで推定 ここから
 ##### 全列の抽出＆数値化
 age_pred_data = pd.get_dummies(all_data[['Age', 'Pclass', 'Sex', 'Fare', 'SibSp', 'Parch', 'Title', 'FamilySizeGroup']])
 
