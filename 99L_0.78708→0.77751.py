@@ -1,16 +1,12 @@
 import pandas as pd
 import numpy as np
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 ##### データ読み込み
 train_data = pd.read_csv('/kaggle/input/competitions/titanic/train.csv')
 test_data  = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
 
 ##### 前準備
-test_data['Survived'] = np.nan
-all_data = pd.concat([train_data, test_data], ignore_index=True, sort=False)
+all_data = pd.concat([train_data, test_data], ignore_index=True)
 
 ##### 特徴量エンジニアリング(家族人数)
 # Family = SibSp + Parch + 1 を特徴量とし、グルーピング
@@ -63,7 +59,7 @@ all_data.loc[(all_data.Age.isnull()), 'Age'] = predictedAges
 
 # ------------- 前処理 ---------------
 # 推定に使用する項目を指定
-df = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label','Cabin_label','Ticket_label']]
+df = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label']]
 
 # ラベル特徴量をワンホットエンコーディング
 df = pd.get_dummies(df)
@@ -118,5 +114,5 @@ print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 PassengerId=test_data['PassengerId']
 predictions = pipeline.predict(test_x)
 submission = pd.DataFrame({"PassengerId": PassengerId, "Survived": predictions.astype(np.int32)})
-submission.to_csv("submission-99L-002.csv", index=False)
-print("submission-99L-002.csv を作成しました")
+submission.to_csv("submission-99L-004.csv", index=False)
+print("submission-99L-004.csv を作成しました")
