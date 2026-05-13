@@ -68,18 +68,18 @@ all_data = pd.get_dummies(df)
 train_data = all_data[all_data['Survived'].notnull()]
 test_data  = all_data[all_data['Survived'].isnull()].drop('Survived',axis=1)
 
-##### 学習データを準備(データフレームをnumpyに変換)
+##### 学習データを準備
 X      = train_data.values[:,1:]  
 y      = train_data.values[:,0].astype(int)
 test_x = test_data.values
 
-# ----------- 推定モデル構築 ---------------
-from sklearn.feature_selection import SelectKBest
+##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_validate
 
 # 採用する特徴量を25個から20個に絞り込む
+from sklearn.feature_selection import SelectKBest
 select = SelectKBest(k = 20)
 
 clf = RandomForestClassifier(random_state = 10, 
@@ -110,9 +110,19 @@ for i, j in enumerate(list_col):
 X_selected = select.transform(X)
 print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 
-# ----- Submit dataの作成　------- 
 PassengerId=test_data2['PassengerId']
+
+##### 予測
 predictions = pipeline.predict(test_x)
-submission = pd.DataFrame({"PassengerId": PassengerId, "Survived": predictions.astype(np.int32)})
+
+##### 提出ファイル作成
+submission = pd.DataFrame({
+    "PassengerId": PassengerId,
+    "Survived": predictions.astype(np.int32)
+})
+
+##### 提出ファイル出力
 submission.to_csv("submission-99L-004.csv", index=False)
+
+##### 完了
 print("submission-99L-004.csv を作成しました")
