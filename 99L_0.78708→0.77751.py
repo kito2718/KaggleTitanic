@@ -9,21 +9,18 @@ test_data2 = pd.read_csv('/kaggle/input/competitions/titanic/test.csv')
 all_data = pd.concat([train_data, test_data2], ignore_index=True)
 
 ##### 特徴量エンジニアリング(家族人数)
-# Family = SibSp + Parch + 1 を特徴量とし、グルーピング
 all_data['Family']=all_data['SibSp']+all_data['Parch']+1
 all_data.loc[(all_data['Family']>=2) & (all_data['Family']<=4), 'Family_label'] = 2
 all_data.loc[(all_data['Family']>=5) & (all_data['Family']<=7) | (all_data['Family']==1), 'Family_label'] = 1  # == に注意
 all_data.loc[(all_data['Family']>=8), 'Family_label'] = 0
 
-
 ##### 特徴量エンジニアリング(敬称抽出)
 all_data['Title'] = all_data['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
+all_data['Title'].replace(['Mlle'], 'Miss', inplace=True)
+all_data['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
+all_data['Title'].replace(['Jonkheer'], 'Master', inplace=True)
 all_data['Title'].replace(['Capt', 'Col', 'Major', 'Dr', 'Rev'], 'Officer', inplace=True)
 all_data['Title'].replace(['Don', 'Sir',  'the Countess', 'Lady', 'Dona'], 'Royalty', inplace=True)
-all_data['Title'].replace(['Mme', 'Ms'], 'Mrs', inplace=True)
-all_data['Title'].replace(['Mlle'], 'Miss', inplace=True)
-all_data['Title'].replace(['Jonkheer'], 'Master', inplace=True)
-
 
 ##### 特徴量エンジニアリング(Fareの欠損値補完(これはTestデータに1件だけなので中央値で。特にこだわりなし))
 # 欠損値を Embarked='S', Pclass=3 の平均値で補完
@@ -31,7 +28,7 @@ fare=all_data.loc[(all_data['Embarked'] == 'S') & (all_data['Pclass'] == 3), 'Fa
 all_data['Fare']=all_data['Fare'].fillna(fare)
 
 ##################### AgeをRandomForestRegressorで推定 ここから
-# Age を Pclass, Sex, Parch, SibSp からランダムフォレストで推定
+##### Age を Pclass, Sex, Parch, SibSp からランダムフォレストで推定
 from sklearn.ensemble import RandomForestRegressor
 
 # 推定に使用する項目を指定
@@ -59,10 +56,10 @@ all_data.loc[(all_data.Age.isnull()), 'Age'] = predictedAges
 
 # ------------- 前処理 ---------------
 # 推定に使用する項目を指定
-df = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label']]
+all_data = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label']]
 
 ####### 本番モデル用のOne-Hot Encoding
-all_data = pd.get_dummies(df)
+all_data = pd.get_dummies(all_data)
 
 ##### 元に戻す
 train_data = all_data[all_data['Survived'].notnull()]
