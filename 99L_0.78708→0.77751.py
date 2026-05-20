@@ -58,17 +58,37 @@ all_data.loc[(all_data.Age.isnull()), 'Age'] = predictedAges
 # 推定に使用する項目を指定
 all_data = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label']]
 
+##----------- 000
+##Index(['Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked', 'Title', 'Family_label'], dtype='object')
+##----------- 001
+
 ####### 本番モデル用のOne-Hot Encoding
 all_data = pd.get_dummies(all_data)
+
+### ----------- 001
+### Index(['Survived', 'Pclass', 'Age', 'Fare', 'Family_label', 'Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Title_Master', 'Title_Miss', 'Title_Mr', 'Title_Mrs', 'Title_Officer', 'Title_Royalty'], dtype='object')
+### ----------- 002
 
 ##### 元に戻す
 train_data = all_data[all_data['Survived'].notnull()]
 test_data  = all_data[all_data['Survived'].isnull()].drop('Survived',axis=1)
 
+### ----------- 002
+### Index(['Survived', 'Pclass', 'Age', 'Fare', 'Family_label', 'Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Title_Master', 'Title_Miss', 'Title_Mr', 'Title_Mrs', 'Title_Officer', 'Title_Royalty'], dtype='object')
+### ----------- 003
+### Index([            'Pclass', 'Age', 'Fare', 'Family_label', 'Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S', 'Title_Master', 'Title_Miss', 'Title_Mr', 'Title_Mrs', 'Title_Officer', 'Title_Royalty'], dtype='object')
+### ----------- 004
+
+##### 特徴量を選択
+features = ["Pclass", 'Age', 'Fare', 'Family_label', ] \
+         + [col for col in train_data.columns if "Sex_" in col] \
+         + [col for col in train_data.columns if "Embarked_" in col] \
+         + [col for col in train_data.columns if "Title_" in col]
+
 ##### 学習データを準備
-X      = train_data.values[:,1:]  
-y      = train_data.values[:,0].astype(int)
-test_x = test_data.values
+X      = train_data[features]
+y      = train_data["Survived"]
+test_x = test_data[features]
 
 ##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
