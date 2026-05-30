@@ -48,10 +48,10 @@ rfr = RandomForestRegressor(random_state=0, n_estimators=100, n_jobs=-1)
 rfr.fit(X_age, y_age)
 
 ##### 欠損値のAge予測実行
-predicted_ages = rfr.predict(age_unknown[:, 1::])
+predicted_ages = rfr.predict(age_unknown[:, 1:])
 
 ##### 元のall_dataに補完
-all_data.loc[(all_data.Age.isnull()), 'Age'] = predicted_ages
+all_data.loc[all_data['Age'].isnull(), 'Age'] = predicted_ages
 #####################AgeをRandomForestRegressorで推定 ここまで
 
 ####### 本番モデル用のOne-Hot Encoding
