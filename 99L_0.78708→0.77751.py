@@ -35,14 +35,14 @@ age_pred_data = all_data[['Age', 'Pclass','Sex','Parch','SibSp']]
 age_pred_data=pd.get_dummies(age_pred_data)
 
 ##### Ageがわかっているデータに分離し、numpyに変換
-age_known  = age_pred_data[age_pred_data.Age.notnull()].values
-age_unknown= age_pred_data[age_pred_data.Age.isnull()].values
+age_known  = age_pred_data[age_pred_data['Age'].notnull()].values
+age_unknown= age_pred_data[age_pred_data['Age'].isnull()].values
 
 ##### 学習用データをX_age, y_ageに分離
 X_age = age_known[:, 1:] # Age以外の特徴量
 y_age = age_known[:, 0]  # Age(目的変数)
 
-# ランダムフォレスト(回帰)で推定モデルを構築
+##### ランダムフォレスト(回帰)で推定モデルを構築
 from sklearn.ensemble import RandomForestRegressor
 rfr = RandomForestRegressor(random_state=0, n_estimators=100, n_jobs=-1)
 rfr.fit(X_age, y_age)
