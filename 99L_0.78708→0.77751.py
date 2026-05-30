@@ -10,9 +10,9 @@ all_data = pd.concat([train_data, test_data], ignore_index=True)
 
 ##### 特徴量エンジニアリング(家族人数)
 all_data['FamilySize'] = all_data['SibSp'] + all_data['Parch'] + 1
-all_data.loc[(all_data['FamilySize']>=2) & (all_data['FamilySize']<=4), 'Family_label'] = 2
-all_data.loc[(all_data['FamilySize']>=5) & (all_data['FamilySize']<=7) | (all_data['FamilySize']==1), 'Family_label'] = 1  # == に注意
-all_data.loc[(all_data['FamilySize']>=8), 'Family_label'] = 0
+all_data.loc[(all_data['FamilySize']>=2) & (all_data['FamilySize']<=4), 'FamilySizeGroup'] = 2
+all_data.loc[(all_data['FamilySize']>=5) & (all_data['FamilySize']<=7) | (all_data['FamilySize']==1), 'FamilySizeGroup'] = 1  # == に注意
+all_data.loc[(all_data['FamilySize']>=8), 'FamilySizeGroup'] = 0
 
 ##### 特徴量エンジニアリング(敬称抽出)
 all_data['Title'] = all_data['Name'].map(lambda x: x.split(', ')[1].split('. ')[0])
@@ -62,7 +62,7 @@ train_data = all_data[all_data['Survived'].notnull()]
 test_data  = all_data[all_data['Survived'].isnull()]
 
 ##### 特徴量を選択
-features = ["Pclass", 'Age', 'Fare', 'Family_label', ] \
+features = ["Pclass", 'Age', 'Fare', 'FamilySizeGroup', ] \
          + [col for col in train_data.columns if "Sex_" in col] \
          + [col for col in train_data.columns if "Embarked_" in col] \
          + [col for col in train_data.columns if "Title_" in col]
@@ -109,14 +109,12 @@ for i, j in enumerate(list_col):
 X_selected = select.transform(X)
 print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 
-PassengerId=test_data['PassengerId']
-
 ##### 予測
 predictions = pipeline.predict(test_x)
 
 ##### 提出ファイル作成
 submission = pd.DataFrame({
-    "PassengerId": PassengerId,
+    "PassengerId": test_data['PassengerId'],
     "Survived": predictions.astype(np.int32)
 })
 
