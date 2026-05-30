@@ -33,26 +33,26 @@ all_data['Sex'] = all_data['Sex'].map({'male': 0, 'female': 1})
 all_data['Fare'] = all_data['Fare'].fillna(all_data['Fare'].median())
 
 ##################### AgeをRandomForestRegressorで推定 ここから
-##### 全列の抽出＆数値化
+##### 全列の抽出＆One-Hotエンコーディング
 age_pred_data = pd.get_dummies(all_data[['Age', 'Pclass', 'Sex', 'Fare', 'SibSp', 'Parch', 'Title', 'FamilySizeGroup']])
 
-##### Ageがわかっているデータと欠損しているデータに分ける
+##### Ageがわかっているデータに分離し、numpyに変換
 age_known  = age_pred_data[age_pred_data['Age'].notnull()].values
 age_unknown= age_pred_data[age_pred_data['Age'].isnull()].values
 
-##### 学習用データ
+##### 学習用データをX_age, y_ageに分離
 X_age = age_known[:, 1:] # Age以外の特徴量
 y_age = age_known[:, 0]  # Age(目的変数)
 
-##### 回帰モデルで予測
+##### ランダムフォレスト(回帰)で推定モデルを構築
 from sklearn.ensemble import RandomForestRegressor
 rfr = RandomForestRegressor(random_state=1, n_estimators=100)
 rfr.fit(X_age, y_age)
 
-##### 欠損値の予測実行
+##### 欠損値のAge予測実行
 predicted_ages = rfr.predict(age_unknown[:, 1:])
 
-##### 元のall_dataに値を戻す
+##### 元のall_dataに補完
 all_data.loc[all_data['Age'].isnull(), 'Age'] = predicted_ages
 #####################AgeをRandomForestRegressorで推定 ここまで
 
