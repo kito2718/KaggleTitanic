@@ -34,7 +34,7 @@ age_pred_data = all_data[['Age', 'Pclass', 'Sex', 'SibSp', 'Parch']]
 ##### ラベル特徴量をOne-Hotエンコーディング
 age_pred_data = pd.get_dummies(age_pred_data)
 
-##### Ageがわかっているデータに分離し、numpyに変換
+##### Ageがわかっているデータとわかってないデータに分離し、numpyに変換
 age_known  = age_pred_data[age_pred_data['Age'].notnull()].values
 age_unknown= age_pred_data[age_pred_data['Age'].isnull()].values
 
@@ -58,6 +58,20 @@ all_data.loc[all_data['Age'].isnull(), 'Age'] = predicted_ages
 labels = ['Child', 'Teen', 'Adult', 'Mid', 'Senior']
 bins = [0, 12, 18, 31, 60, 100]
 all_data['AgeBin'] = pd.cut(all_data['Age'], bins=bins, labels=labels, right=False).astype(str)
+
+#################### Surname ここから
+#################### Surname ここまで
+
+##### ----------- Ticket ----------------
+##### 同一Ticketナンバーの人が何人いるかを特徴量として抽出
+
+##### 生存率で3つにグルーピング
+
+##### ------------- Cabin ----------------
+##### Cabinの先頭文字を特徴量とする(欠損値は U )
+
+##### ---------- Embarked ---------------
+##### 欠損値をSで補完
 
 ####### 本番モデル用のOne-Hot Encoding
 all_data = pd.get_dummies(all_data, columns=['Sex', 'Embarked', 'Title', 'AgeBin'])
