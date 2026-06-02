@@ -56,85 +56,78 @@ df.loc[(df.Age.isnull()), 'Age'] = predictedAges
 #####################AgeをRandomForestRegressorで推定 ここまで
 
 
-# ------------ Surname ------------
-# NameからSurname(苗字)を抽出
+#################### Surname ここから
+##### NameからSurname(苗字)を抽出
 df['Surname'] = df['Name'].map(lambda name:name.split(',')[0].strip())
 
-# 同じSurname(苗字)の出現頻度をカウント(出現回数が2以上なら家族)
+##### 同じSurname(苗字)の出現頻度をカウント(出現回数が2以上なら家族)
 df['FamilyGroup'] = df['Surname'].map(df['Surname'].value_counts()) 
 
-# 家族で16才以下または女性の生存率
+##### 家族で16才以下または女性の生存率
 Female_Child_Group=df.loc[(df['FamilyGroup']>=2) & ((df['Age']<=16) | (df['Sex']=='female'))]
 Female_Child_Group=Female_Child_Group.groupby('Surname')['Survived'].mean()
 print(Female_Child_Group.value_counts())
 
-# 家族で16才超えかつ男性の生存率
+##### 家族で16才超えかつ男性の生存率
 Male_Adult_Group=df.loc[(df['FamilyGroup']>=2) & (df['Age']>16) & (df['Sex']=='male')]
 Male_Adult_List=Male_Adult_Group.groupby('Surname')['Survived'].mean()
 print(Male_Adult_List.value_counts())
 
-# デッドリストとサバイブリストの作成
+##### デッドリストとサバイブリストの作成
 Dead_list=set(Female_Child_Group[Female_Child_Group.apply(lambda x:x==0)].index)
 Survived_list=set(Male_Adult_List[Male_Adult_List.apply(lambda x:x==1)].index)
 
-# デッドリストとサバイブリストの表示
+##### デッドリストとサバイブリストの表示
 print('Dead_list = ', Dead_list)
 print('Survived_list = ', Survived_list)
 
-# デッドリストとサバイブリストをSex, Age, Title に反映させる
-df.loc[(df['Survived'].isnull()) & (df['Surname'].apply(lambda x:x in Dead_list)),\
-             ['Sex','Age','Title']] = ['male',28.0,'Mr']
-df.loc[(df['Survived'].isnull()) & (df['Surname'].apply(lambda x:x in Survived_list)),\
-             ['Sex','Age','Title']] = ['female',5.0,'Mrs']
+##### デッドリストとサバイブリストをSex, Age, Title に反映させる
+df.loc[(df['Survived'].isnull()) & (df['Surname'].apply(lambda x:x in Dead_list    )), ['Sex','Age','Title']] = ['male',28.0,'Mr']
+df.loc[(df['Survived'].isnull()) & (df['Surname'].apply(lambda x:x in Survived_list)), ['Sex','Age','Title']] = ['female',5.0,'Mrs']
+#################### Surname ここまで
 
-# ----------- Ticket ----------------
-# 同一Ticketナンバーの人が何人いるかを特徴量として抽出
+##### ----------- Ticket ----------------
+##### 同一Ticketナンバーの人が何人いるかを特徴量として抽出
 Ticket_Count = dict(df['Ticket'].value_counts())
 df['TicketGroup'] = df['Ticket'].map(Ticket_Count)
-sns.barplot(x='TicketGroup', y='Survived', data=df, palette='Set3')
-plt.show()
 
-# 生存率で3つにグルーピング
+##### 生存率で3つにグルーピング
 df.loc[(df['TicketGroup']>=2) & (df['TicketGroup']<=4), 'Ticket_label'] = 2
 df.loc[(df['TicketGroup']>=5) & (df['TicketGroup']<=8) | (df['TicketGroup']==1), 'Ticket_label'] = 1  
 df.loc[(df['TicketGroup']>=11), 'Ticket_label'] = 0
-sns.barplot(x='Ticket_label', y='Survived', data=df, palette='Set3')
-plt.show()
 
-# ------------- Cabin ----------------
-# Cabinの先頭文字を特徴量とする(欠損値は U )
+##### ------------- Cabin ----------------
+##### Cabinの先頭文字を特徴量とする(欠損値は U )
 df['Cabin'] = df['Cabin'].fillna('Unknown')
 df['Cabin_label']=df['Cabin'].str.get(0)
-sns.barplot(x='Cabin_label', y='Survived', data=df, palette='Set3')
-plt.show()
 
-# ---------- Embarked ---------------
-# 欠損値をSで補完
+##### ---------- Embarked ---------------
+##### 欠損値をSで補完
 df['Embarked'] = df['Embarked'].fillna('S') 
 
 # ------------- 前処理 ---------------
 # 推定に使用する項目を指定
 df = df[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','Family_label','Cabin_label','Ticket_label']]
 
-# ラベル特徴量をワンホットエンコーディング
+####### 本番モデル用のOne-Hot Encoding
 df = pd.get_dummies(df)
 
-# データセットを trainとtestに分割
+##### 元に戻す
 train = df[df['Survived'].notnull()]
 test = df[df['Survived'].isnull()].drop('Survived',axis=1)
 
-# データフレームをnumpyに変換
+##### 学習データを準備
 X = train.values[:,1:]  
 y = train.values[:,0].astype(int)
 test_x = test.values
 
-# ----------- 推定モデル構築 ---------------
-from sklearn.feature_selection import SelectKBest
+##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_validate
 
 # 採用する特徴量を25個から20個に絞り込む
+from sklearn.feature_selection import SelectKBest
 select = SelectKBest(k = 20)
 
 clf = RandomForestClassifier(random_state = 10, 
@@ -165,10 +158,16 @@ for i, j in enumerate(list_col):
 X_selected = select.transform(X)
 print('X.shape={}, X_selected.shape={}'.format(X.shape, X_selected.shape))
 
-# ----- Submit dataの作成　------- 
-PassengerId=test_data['PassengerId']
+##### 予測
 predictions = pipeline.predict(test_x)
-submission = pd.DataFrame({"PassengerId": PassengerId, "Survived": predictions.astype(np.int32)})
+
+##### 提出ファイル作成
+submission = pd.DataFrame({
+    "PassengerId": test_data['PassengerId'],
+    "Survived": predictions.astype(np.int32)
+})
+
+##### 提出ファイル出力
 submission.to_csv("submission-99L-0.80622_001.csv", index=False)
 
 ##### 完了
