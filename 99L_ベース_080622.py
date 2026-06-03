@@ -113,12 +113,12 @@ all_data = pd.get_dummies(all_data)
 
 ##### 元に戻す
 train_data = all_data[all_data['Survived'].notnull()]
-test = all_data[all_data['Survived'].isnull()].drop('Survived',axis=1)
+test_data  = all_data[all_data['Survived'].isnull()].drop('Survived',axis=1)
 
 ##### 学習データを準備
 X      = train_data.values[:,1:]
 y      = train_data.values[:,0].astype(int)
-test_x = test.values
+test_x = test_data.values
 
 ##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
