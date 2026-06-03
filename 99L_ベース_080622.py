@@ -112,12 +112,12 @@ all_data = all_data[['Survived','Pclass','Sex','Age','Fare','Embarked','Title','
 all_data = pd.get_dummies(all_data)
 
 ##### 元に戻す
-train = all_data[all_data['Survived'].notnull()]
+train_data = all_data[all_data['Survived'].notnull()]
 test = all_data[all_data['Survived'].isnull()].drop('Survived',axis=1)
 
 ##### 学習データを準備
-X      = train.values[:,1:]
-y      = train.values[:,0].astype(int)
+X      = train_data.values[:,1:]
+y      = train_data.values[:,0].astype(int)
 test_x = test.values
 
 ##### モデル作成・学習
