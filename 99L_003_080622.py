@@ -114,10 +114,13 @@ all_data = pd.get_dummies(all_data)
 train_data2= all_data.iloc[:len(train_data)].copy()
 test_data2 = all_data.iloc[len(train_data):].copy().drop('Survived',axis=1)
 
+##### 特徴量を選択
+features = [col for col in train_data2.columns if col not in ['PassengerId', 'Survived', 'Name', 'SibSp', 'Parch', 'Ticket', 'Cabin', 'FamilySize', 'Surname', 'FamilyGroup', 'TicketGroup']]
+
 ##### DataFrameをnumpyに型変換
-X      = train_data2.values[:,1:]
-y      = train_data2.values[:,0].astype(int)
-X_test = test_data2.values
+X      = train_data2[features].values
+y      = train_data2["Survived"].values.astype(int)
+X_test = test_data2[features].values
 
 ##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
