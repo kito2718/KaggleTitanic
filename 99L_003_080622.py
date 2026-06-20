@@ -113,10 +113,10 @@ test_data2 = all_data.iloc[len(train_data):].copy().drop('Survived',axis=1)
 ##### 特徴量を選択
 features = [col for col in train_data2.columns if col not in ['PassengerId', 'Survived', 'Name', 'SibSp', 'Parch', 'Ticket', 'Cabin', 'FamilySize', 'Surname', 'FamilyGroup', 'TicketGroup']]
 
-##### DataFrameをnumpyに型変換
-X      = train_data2[features].values
-y      = train_data2["Survived"].values.astype(int)
-X_test = test_data2[features].values
+##### 学習データと正解と試験データを取得
+X      = train_data2[features]
+y      = train_data2["Survived"].astype(int)
+X_test = test_data2[features]
 
 ##### モデル作成・学習
 from sklearn.ensemble import RandomForestClassifier
@@ -127,11 +127,11 @@ from sklearn.model_selection import cross_validate
 from sklearn.feature_selection import SelectKBest
 select = SelectKBest(k = 20)
 
-clf = RandomForestClassifier(random_state = 10, 
-                             warm_start = True,  # 既にフィットしたモデルに学習を追加 
-                             n_estimators = 26,
-                             max_depth = 6, 
-                             max_features = 'sqrt')
+clf =RandomForestClassifier(random_state = 10, 
+                            warm_start = True,  # 既にフィットしたモデルに学習を追加 
+                            n_estimators = 26,
+                            max_depth = 6, 
+                            max_features = 'sqrt')
 pipeline = make_pipeline(select, clf)
 pipeline.fit(X, y)
 
@@ -142,10 +142,10 @@ print('mean_std = ', np.std(cv_result['test_score']))
 
 # --------　採用した特徴量 ---------------
 # 採用の可否状況
-mask= select.get_support()
+mask = select.get_support()
 
 # 項目のリスト
-list_col = list(all_data[features].columns[1:])
+list_col = list(all_data[features].columns)
 
 # 項目別の採用可否の一覧表
 for i, j in enumerate(list_col):
