@@ -216,3 +216,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+zenn_articles
+/zenn_dev.io_posts/(完)zenn_260626_0940_titanic_baseline_modeling.md
+/zenn_dev.io_posts/(添削完了)zenn_260627_1940_01_cabin_feature.md
+/zenn_dev.io_posts/devto_260627_1940_01_cabin_feature_en.md
+/zenn_dev.io_posts/images/titanic_eda_1.png
+/zenn_dev.io_posts/images/titanic_eda_2.png
+/zenn_dev.io_posts/images/titanic_eda_3.png
+/zenn_dev.io_posts/images/titanic_eda_4.png
+/zenn_dev.io_posts/images/titanic_eda_5.png
+/zenn_dev.io_posts/zenn_15-1_kaggle_titanic_runnnable_.md
+/zenn_dev.io_posts/zenn_15-2_kaggle_titanic_eda_.md
+/zenn_dev.io_posts/zenn_260627_1940_01_cabin_feature.md
+/zenn_dev.io_posts/zenn_260627_1940_02_group_feature.md
+/zenn_dev.io_posts/zenn_260627_1940_03_onehot_encoding.md
