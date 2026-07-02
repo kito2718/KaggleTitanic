@@ -1,10 +1,10 @@
-# 続き
-
 # やったことリスト
-- 2026/06/27(土) 18:51 初回提出 CV:0.8350 Public:0.77272 EDA→特徴量エンジニアリング(敬称抽出,Age補完,家族数追加,単身追加,Fare補完,Deck追加)→Encoding(One-Hot('Sex','Embarked','Title','Deck'))→モデル検証(LogisticRegression,RandomForest,XGBoost,LightGBM)
-- 2026/07/01(水) 22:35 特徴量組み合わせ・詳細化(1-1, 1-2, 1-3)を追加して検証。CVスコアが最高 0.8451 (LightGBM) となり、前回の最高 CV:0.8507 (Logistic Regression) を下回ったため、提出は見送り。
+- 2026/07/02(木) 20:31 年齢 (Age) をLogistic Regression使った欠損値補完の高度化を検証。CV:0.8519、Public Score:0.78947 をマークし最高精度を更新したばい。
 - 2026/07/02(木) 20:21 同一チケットに基づく Fare (運賃) の一人あたり化とグループ分析を検証。最高 CV:0.8485 (LightGBM / Fare_per_personのみ時) となり、ベースラインの最高精度 0.8507 を超えられず提出は見送り。
-- 2026/07/02(木) 20:31 年齢 (Age) 欠損値補完の高度化を検証。Logistic Regression にて CV:0.8519、Public Score:0.78947 をマークし最高精度を更新したばい。
+- 2026/07/01(水) 22:35 特徴量組み合わせ・詳細化(1-1, 1-2, 1-3)を追加して検証。CVスコアが最高 0.8451 (LightGBM) となり、前回の最高 CV:0.8507 (Logistic Regression) を下回ったため、提出は見送り。
+- 2026/06/27(土) 18:51 初回提出 CV:0.8350 Public:0.77272 EDA→特徴量エンジニアリング(敬称抽出,Age補完,家族数追加,単身追加,Fare補完,Deck追加)→Encoding(One-Hot('Sex','Embarked','Title','Deck'))→モデル検証(LogisticRegression,RandomForest,XGBoost,LightGBM)
+
+# 実行ログ
 
 ## 2026/07/02(木) 20:31
 ### 手順③: 実行
