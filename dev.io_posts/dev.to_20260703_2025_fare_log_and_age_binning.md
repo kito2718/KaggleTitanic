@@ -6,6 +6,16 @@ tags: "machinelearning, kaggle, python, datascience"
 canonical_url: "https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_and_age_binning"
 ---
 
+[Kaggle Practice 1: Setting Up a Local Environment for the Kaggle Titanic Competition](https://dev.to/kito2718/setting-up-kaggle-titanic-environment-on-a-local-pc-336k)
+[Kaggle Practice 2: First Submission](https://dev.to/kito2718/kaggle-titanic-my-first-submission-eda-feature-engineering-and-model-evaluation-896)
+[Kaggle Practice 3: Feature Engineering for Cabin](https://dev.to/kito2718/kaggle-titanic-cabin-feature-engineering-is-it-really-effective-44nc)
+[Kaggle Practice 4: Feature Engineering (Imputing Age with Random Forest)](https://dev.to/kito2718/kaggle-titanic-improving-survival-prediction-with-random-forest-age-imputation-5b3l)
+[Kaggle Practice 5: Feature Engineering (Fare Log-Transformation and Age Stage Binning)](https://dev.to/kito2718/kaggle-titanic-improving-score-with-fare-log-transformation-and-age-stage-binning)
+
+https://www.kaggle.com/c/titanic
+
+[Available on GitHub](https://github.com/kito2718/KaggleTitanic)
+
 # Abstract
 
 - Applied log-transformation to passenger Fare to mitigate skewness and stage binning to Age for life stage classification.
@@ -88,3 +98,11 @@ The corresponding code has been committed to GitHub: [titanic_eda_20260703_2025_
 
 Log-transformation and binning proved to be a highly effective combination for boosting tree-based models.
 For our next attempt, we will target hyperparameter tuning (using Optuna) and model ensembling (stacking/blending) to push the score even further.
+
+---
+
+← [Kaggle Introduction 14 (Game AI and Reinforcement Learning)](https://dev.to/kito2718/kaggle-introduction-14-game-ai-and-reinforcement-learning-draft)
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;[Kaggle Practice 2 (xxxx)](https://dev.to/kito2718/articles/xxxx) →
+
+Japanese version: [15-⑤[AI][Kaggle]Kaggle実践1 特徴量エンジニアリング(数値特徴量の非線形変換とビン化)](https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_and_age_binning)
+
