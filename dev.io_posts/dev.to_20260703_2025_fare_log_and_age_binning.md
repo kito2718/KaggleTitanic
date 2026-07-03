@@ -104,5 +104,11 @@ For our next attempt, we will target hyperparameter tuning (using Optuna) and mo
 ← [Kaggle Introduction 14 (Game AI and Reinforcement Learning)](https://dev.to/kito2718/kaggle-introduction-14-game-ai-and-reinforcement-learning-draft)
 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;[Kaggle Practice 2 (xxxx)](https://dev.to/kito2718/articles/xxxx) →
 
-Japanese version: [15-⑤[AI][Kaggle]Kaggle実践1 特徴量エンジニアリング(数値特徴量の非線形変換とビン化)](https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_and_age_binning)
+Japanese version:
+[Kaggle Practice 1: Setting Up a Local Environment for the Kaggle Titanic Competition](https://zenn.dev/rg687076/articles/zenn_260627_0000_00_create_local_titanic_env)
+[Kaggle Practice 2: First Submission](https://zenn.dev/rg687076/articles/zenn_260627_0000_01_first_submission)
+[Kaggle Practice 3: Feature Engineering for Cabin](https://zenn.dev/rg687076/articles/zenn_260627_1940_01_cabin_feature)
+[Kaggle Practice 4: Feature Engineering (Imputing Age with Random Forest)](https://zenn.dev/rg687076/articles/zenn_20260702_2031_age_imputation)
+[Kaggle Practice 5: Feature Engineering (Fare Log-Transformation and Age Stage Binning)](https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_and_age_binning)
+
 
