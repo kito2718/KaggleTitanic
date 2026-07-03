@@ -1,4 +1,5 @@
 # やったことリスト
+- 2026/07/03(金) 21:40 ブログ用の解説図付きZenn記事を英訳し、DEV.to用ポストをGitHubにコミット・Push完了したばい。
 - 2026/07/03(金) 20:20 数値特徴量の非線形変換 (Fareの対数変換) とビン化を検証。最高CV:0.8519 (元のLogistic Regressionベースライン) を下回り、提出は見送り。
 - 2026/07/02(木) 20:31 年齢 (Age) をLogistic Regression使った欠損値補完の高度化を検証。CV:0.8519、Public Score:0.78947 をマークし最高精度を更新したばい。
 - 2026/07/02(木) 20:21 同一チケットに基づく Fare (運賃) の一人あたり化とグループ分析を検証。最高 CV:0.8485 (LightGBM / Fare_per_personのみ時) となり、ベースラインの最高精度 0.8507 を超えられず提出は見送り。
@@ -6,6 +7,16 @@
 - 2026/06/27(土) 18:51 初回提出 CV:0.8350 Public:0.77272 EDA→特徴量エンジニアリング(敬称抽出,Age補完,家族数追加,単身追加,Fare補完,Deck追加)→Encoding(One-Hot('Sex','Embarked','Title','Deck'))→モデル検証(LogisticRegression,RandomForest,XGBoost,LightGBM)
 
 # 実行ログ
+
+## 2026/07/03(金) 21:40
+### 手順④・⑤: ブログ用記事生成・投稿タスク
+
+ユーザーからのリクエストを受け、Zenn用の記事（解説図付き）を英訳し、DEV.to用ポストを作成・コミットしたばい。
+
+- **Zennポストファイル名**: `zenn_articles/articles/zenn_20260703_2025_fare_log_and_age_binning.md` (ポスト作成完了)
+- **DEV.toポストファイル名**: `dev.io_posts/dev.to_20260703_2025_fare_log_and_age_binning.md` (ポスト作成およびコミット完了)
+
+英訳記事には、Fare対数変換前後の分布グラフとAgeライフステージ別ビン化の複合グラフをGitHub Raw画像として埋め込み、見やすさを維持したまま配置したやね。また、`canonical_url` も正しく設定したばい。
 
 ## 2026/07/03(金) 20:20
 ### 手順③: 実行
