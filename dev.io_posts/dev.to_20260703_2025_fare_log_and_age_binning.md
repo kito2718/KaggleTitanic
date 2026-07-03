@@ -10,7 +10,7 @@ canonical_url: "https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_a
 [Kaggle Practice 2: First Submission](https://dev.to/kito2718/kaggle-titanic-my-first-submission-eda-feature-engineering-and-model-evaluation-896)
 [Kaggle Practice 3: Feature Engineering for Cabin](https://dev.to/kito2718/kaggle-titanic-cabin-feature-engineering-is-it-really-effective-44nc)
 [Kaggle Practice 4: Feature Engineering (Imputing Age with Random Forest)](https://dev.to/kito2718/kaggle-titanic-improving-survival-prediction-with-random-forest-age-imputation-5b3l)
-[Kaggle Practice 5: Feature Engineering (Fare Log-Transformation and Age Stage Binning)](https://dev.to/kito2718/kaggle-titanic-improving-score-with-fare-log-transformation-and-age-stage-binning)
+[Kaggle Practice 5: Feature Engineering (Fare Log-Transformation and Age Stage Binning)](https://dev.to/kito2718/kaggle-titanic-improving-score-with-fare-log-transformation-and-age-stage-binning-2d5e)
 
 https://www.kaggle.com/c/titanic
 
@@ -22,13 +22,9 @@ https://www.kaggle.com/c/titanic
 - While the linear model (Logistic Regression) accuracy decreased due to representation changes, tree-based models (Random Forest, XGBoost, LightGBM) showed improved CV accuracy under Pattern C (excluding original continuous Fare and Age).
 - Submitted predictions from the improved LightGBM model (Pattern C) and achieved a new best Kaggle Public Score of **0.79665** (previously 0.78947).
 
----
-
 ## Introduction
 
 So far, we achieved a 5-Fold CV of 0.8519 and a Kaggle Public Score of 0.78947 by introducing ML-based age imputation. In this iteration, we focused on scaling numerical features and handling non-linear relationships to push our score further.
-
----
 
 ## Preprocessing & Features
 
@@ -54,8 +50,6 @@ To capture this non-linear relationship, we split passengers into 5 life stages 
 
 This classification allows models to capture specific group boundaries (e.g., protecting children during evacuation) more effectively.
 
----
-
 ## Evaluation Patterns for Multicollinearity
 
 Since the log-transformed `Log_Fare` and binned `Age_Bin` dummy variables are highly correlated with their original continuous counterparts, keeping both might cause instability due to multicollinearity. Thus, we evaluated 4 different feature configurations using 5-Fold Stratified Cross-Validation:
@@ -64,8 +58,6 @@ Since the log-transformed `Log_Fare` and binned `Age_Bin` dummy variables are hi
 - **Pattern B**: Exclude `Fare` (replace with `Log_Fare`), keep `Age`, add `Age_Bin` dummy variables.
 - **Pattern C**: Exclude `Fare` (replace with `Log_Fare`), exclude `Age` (use only `Age_Bin` dummy variables).
 - **Pattern D**: Keep `Fare`, exclude `Age` (use only `Age_Bin` dummy variables).
-
----
 
 ## Validation Results (5-Fold CV Accuracy)
 
@@ -80,8 +72,6 @@ Since the log-transformed `Log_Fare` and binned `Age_Bin` dummy variables are hi
 - **Logistic Regression**: Converting Age to dummy variables resulted in a loss of granular numerical information, which led to a slightly lower CV score compared to the baseline (0.8519).
 - **Tree-Based Models**: In **Pattern C** (excluding continuous Fare and Age), all tree models showed significant accuracy improvements. Removing redundant continuous variables likely prevented trees from splitting too deeply, acting as a form of regularization.
 
----
-
 ## Kaggle Submission Result
 
 Although the overall best CV score did not exceed the baseline Logistic Regression, the LightGBM model trained on **Pattern C** features achieved a better generalization performance.
@@ -92,17 +82,10 @@ The results demonstrate that while linear models struggled with the binned repre
 
 The corresponding code has been committed to GitHub: [titanic_eda_20260703_2025_fare_log_and_age_binning.ipynb](https://github.com/kito2718/KaggleTitanic/blob/main/notebooks/titanic_eda_20260703_2025_fare_log_and_age_binning.ipynb).
 
----
-
 ## Conclusion & Next Steps
 
 Log-transformation and binning proved to be a highly effective combination for boosting tree-based models.
 For our next attempt, we will target hyperparameter tuning (using Optuna) and model ensembling (stacking/blending) to push the score even further.
-
----
-
-← [Kaggle Introduction 14 (Game AI and Reinforcement Learning)](https://dev.to/kito2718/kaggle-introduction-14-game-ai-and-reinforcement-learning-draft)
-&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;[Kaggle Practice 2 (xxxx)](https://dev.to/kito2718/articles/xxxx) →
 
 Japanese version:
 [Kaggle Practice 1: Setting Up a Local Environment for the Kaggle Titanic Competition](https://zenn.dev/rg687076/articles/zenn_260627_0000_00_create_local_titanic_env)
@@ -110,5 +93,3 @@ Japanese version:
 [Kaggle Practice 3: Feature Engineering for Cabin](https://zenn.dev/rg687076/articles/zenn_260627_1940_01_cabin_feature)
 [Kaggle Practice 4: Feature Engineering (Imputing Age with Random Forest)](https://zenn.dev/rg687076/articles/zenn_20260702_2031_age_imputation)
 [Kaggle Practice 5: Feature Engineering (Fare Log-Transformation and Age Stage Binning)](https://zenn.dev/rg687076/articles/zenn_20260703_2025_fare_log_and_age_binning)
-
-
